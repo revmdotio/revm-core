@@ -1,0 +1,29 @@
+# Rust
+/target
+**/*.rs.bk
+Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Node (SDK)
+sdk/node_modules/
+sdk/dist/
+sdk/.env
+
+# Logs
+*.log
+
+# Test artifacts
+test-ledger/
