@@ -33,3 +33,21 @@ impl Default for AcoConfig {
         }
     }
 }
+
+impl AcoConfig {
+    pub fn validate(&self) -> crate::Result<()> {
+        if self.alpha < 0.0 {
+            return Err(crate::RevmError::ConfigError("alpha must be non-negative".into()));
+        }
+        if self.evaporation_rate <= 0.0 || self.evaporation_rate >= 1.0 {
+            return Err(crate::RevmError::ConfigError("evaporation_rate must be in (0.0, 1.0)".into()));
+        }
+        if self.pheromone_min >= self.pheromone_max {
+            return Err(crate::RevmError::ConfigError("pheromone_min must be less than pheromone_max".into()));
+        }
+        if self.ant_count == 0 {
+            return Err(crate::RevmError::ConfigError("ant_count must be at least 1".into()));
+        }
+        Ok(())
+    }
+}
