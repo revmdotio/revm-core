@@ -63,4 +63,18 @@ impl NetworkTopology {
 
     pub fn node_count(&self) -> usize { self.num_nodes }
     pub fn edge_count(&self) -> usize { self.adjacency.iter().map(|e| e.len()).sum() }
+
+    pub fn update_latency(&mut self, from: usize, to: usize, latency_ms: f64) {
+        self.add_edge(from, to, latency_ms);
+    }
+
+    pub fn add_edge_bidirectional(&mut self, a: usize, b: usize, latency_ms: f64) {
+        self.add_edge(a, b, latency_ms);
+        self.add_edge(b, a, latency_ms);
+    }
+
+    pub fn set_node_info(&mut self, id: usize, label: String, node_type: NodeType) {
+        self.node_labels.insert(id, NodeInfo { id, label, node_type, stake_weight: None });
+    }
 }
+
