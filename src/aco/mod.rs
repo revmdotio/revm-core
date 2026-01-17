@@ -7,3 +7,4 @@ pub use config::AcoConfig;
 pub use pheromone::PheromoneMatrix;
 pub use ant::Ant;
 pub use colony::Colony;
+pub use colony::RoutingResult;
