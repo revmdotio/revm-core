@@ -1,5 +1,6 @@
 pub mod aco;
 pub mod network;
+pub mod router;
 
 use thiserror::Error;
 
@@ -19,6 +20,15 @@ pub enum RevmError {
 
     #[error("RPC connection failed: {0}")]
     RpcError(String),
+
+    #[error("Transaction simulation failed: {0}")]
+    SimulationError(String),
+
+    #[error("Leader schedule unavailable for slot {0}")]
+    LeaderScheduleError(u64),
+
+    #[error("TPU connection refused by validator {0}")]
+    TpuConnectionError(String),
 
     #[error("Configuration invalid: {0}")]
     ConfigError(String),
