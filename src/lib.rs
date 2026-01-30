@@ -1,6 +1,7 @@
 pub mod aco;
 pub mod network;
 pub mod router;
+pub mod solana;
 
 use thiserror::Error;
 
@@ -30,8 +31,14 @@ pub enum RevmError {
     #[error("TPU connection refused by validator {0}")]
     TpuConnectionError(String),
 
+    #[error("Serialization error: {0}")]
+    SerializationError(String),
+
     #[error("Configuration invalid: {0}")]
     ConfigError(String),
 }
 
 pub type Result<T> = std::result::Result<T, RevmError>;
+
+pub const PROGRAM_ID: &str = "REvM7oRNSLQmedGv6sHTPmNJ3GQ3YjxJaYFp2pVi8wk";
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
