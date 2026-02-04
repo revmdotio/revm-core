@@ -3,9 +3,11 @@ name = "revm-core"
 version = "0.1.0"
 edition = "2021"
 authors = ["REVM Protocol <dev@revmprotocol.com>"]
+description = "Ant Colony Optimization routing engine for Solana transaction delivery"
 license = "MIT"
-description = "ACO routing engine for Solana transaction delivery"
 repository = "https://github.com/revm-protocol/revm-core"
+keywords = ["solana", "routing", "aco", "transaction", "optimization"]
+categories = ["algorithms", "network-programming"]
 
 [lib]
 name = "revm_core"
@@ -29,7 +31,23 @@ bs58 = "0.5"
 bincode = "1.3"
 chrono = { version = "0.4", features = ["serde"] }
 parking_lot = "0.12"
+reqwest = { version = "0.11", features = ["json"] }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
 tokio-test = "0.4"
+solana-test-validator = "=1.17.0"
+
+[[bench]]
+name = "routing_bench"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+
+[profile.bench]
+inherits = "release"
+debug = true
