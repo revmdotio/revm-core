@@ -44,6 +44,7 @@ impl Colony {
             best_path: None,
             best_cost: f64::MAX,
             total_routes: 0,
+        // Colony initialized with fresh pheromone trails
         })
     }
 
