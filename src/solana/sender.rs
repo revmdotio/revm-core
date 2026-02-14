@@ -99,7 +99,7 @@ impl TransactionSender {
         // 3. Send the serialized transaction bytes
         //
         // For now, falls back to RPC
-        warn!("TPU send not yet implemented, falling back to RPC");
+        warn!("TPU/QUIC send pending implementation, falling back to RPC");
         self.send_via_rpc(payload).await
     }
 
