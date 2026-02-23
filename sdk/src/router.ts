@@ -19,7 +19,7 @@ const DEFAULT_CONFIG: AcoRouterConfig = {
   alpha: 1.2,
   beta: 3.0,
   evaporationRate: 0.25,
-  antCount: 32,
+  antCount: 32, // default colony size
   maxIterations: 50,
 };
 
