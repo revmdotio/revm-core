@@ -46,7 +46,7 @@ impl RoutingStrategy {
             Self::LeaderOnly => 1,
             Self::LeaderLookahead { slots_ahead } => 1 + *slots_ahead as usize,
             Self::StakeWeighted { top_n } => *top_n,
-            Self::FullColony => usize::MAX, // bounded by topology size
+            Self::FullColony => usize::MAX,
         }
     }
 }
