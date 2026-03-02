@@ -100,7 +100,7 @@ impl PheromoneMatrix {
                     continue;
                 }
                 let intensity = data[i * self.size + j];
-                if intensity > self.config.pheromone_min * 1.05 {
+                if intensity > self.config.pheromone_min * 1.1 {
                     edges.push(PheromoneEdge {
                         from: i,
                         to: j,
