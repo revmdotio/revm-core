@@ -113,7 +113,7 @@ impl AcoConfig {
             deposit_weight: 1.5,
             latency_weight: 1.2,
             stale_threshold_ms: 1200,
-            // Aggressive evaporation tracks leader rotation within ~2 slots
+            
         }
     }
 
