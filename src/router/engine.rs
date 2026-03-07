@@ -92,7 +92,7 @@ impl RoutingEngine {
                     }
                 }
                 Err(e) => {
-                    warn!("Failed to route to target {}: to target {}: {}", target, e);
+                    warn!("Failed to route to target {}: {}", target, e);
                 }
             }
         }

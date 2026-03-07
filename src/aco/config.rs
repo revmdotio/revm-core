@@ -113,7 +113,6 @@ impl AcoConfig {
             deposit_weight: 1.5,
             latency_weight: 1.2,
             stale_threshold_ms: 1200,
-            
         }
     }
 
