@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="assets/banner.png" alt="REVM Protocol" width="800" />
+</p>
+
+<p align="center">
   <strong>REVM CORE</strong><br/>
   Ant Colony Optimization Routing Engine for Solana
 </p>
