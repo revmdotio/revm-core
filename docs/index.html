@@ -81,15 +81,6 @@
     .cover-main {
       color: #e0e0e0 !important;
     }
-    .github-corner {
-      position: fixed !important;
-      top: 0 !important;
-      right: 0 !important;
-      z-index: 999 !important;
-    }
-    .github-corner:hover {
-      opacity: 0.8;
-    }
     .sidebar .app-name img {
       width: 36px;
       vertical-align: middle;
@@ -111,7 +102,7 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
-      name: '<img src="https://revm.io/assets/face.png" alt="REVM" style="width:36px;vertical-align:middle;margin-right:8px;">REVM Protocol',
+      name: 'REVM Protocol',
       repo: 'https://github.com/revmdotio/revm-core',
       loadSidebar: '_sidebar.md',
       subMaxLevel: 3,
@@ -132,16 +123,5 @@
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-toml.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
-  <script>
-    // Replace GitHub corner with our logo
-    var observer = new MutationObserver(function() {
-      var corner = document.querySelector('.github-corner');
-      if (corner) {
-        observer.disconnect();
-        corner.innerHTML = '<img src="https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png" style="width:80px;height:80px;position:fixed;top:10px;right:10px;z-index:999;">';
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  </script>
 </body>
 </html>
