@@ -8,6 +8,7 @@
 </p>
 
 <p align="center">
+  <a href="https://revmdotio.github.io/revm-core/"><img src="https://img.shields.io/badge/docs-revm--core-00ff41?style=flat-square&logo=readthedocs&logoColor=white" alt="Docs" /></a>
   <a href="https://revm.io"><img src="https://img.shields.io/badge/website-revm.io-00ff41?style=flat-square&logo=googlechrome&logoColor=white" alt="Website" /></a>
   <a href="https://x.com/revmdotio"><img src="https://img.shields.io/badge/twitter-@revmdotio-1DA1F2?style=flat-square&logo=x&logoColor=white" alt="Twitter" /></a>
   <a href="https://github.com/revmdotio/revm-core/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT" /></a>
