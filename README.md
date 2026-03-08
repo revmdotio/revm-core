@@ -8,12 +8,13 @@
 </p>
 
 <p align="center">
+  <a href="https://crates.io/crates/revm-core"><img src="https://img.shields.io/crates/v/revm-core?style=flat-square&logo=rust&logoColor=white&color=orange" alt="crates.io" /></a>
+  <a href="https://www.npmjs.com/package/revm-sdk"><img src="https://img.shields.io/npm/v/revm-sdk?style=flat-square&logo=npm&logoColor=white&color=CB3837" alt="npm" /></a>
   <a href="https://revmdotio.github.io/revm-core/"><img src="https://img.shields.io/badge/docs-revm--core-00ff41?style=flat-square&logo=readthedocs&logoColor=white" alt="Docs" /></a>
   <a href="https://revm.io"><img src="https://img.shields.io/badge/website-revm.io-00ff41?style=flat-square&logo=googlechrome&logoColor=white" alt="Website" /></a>
   <a href="https://x.com/revmdotio"><img src="https://img.shields.io/badge/twitter-@revmdotio-1DA1F2?style=flat-square&logo=x&logoColor=white" alt="Twitter" /></a>
   <a href="https://github.com/revmdotio/revm-core/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT" /></a>
   <img src="https://img.shields.io/badge/solana-1.17-9945FF?style=flat-square&logo=solana" alt="Solana" />
-  <img src="https://img.shields.io/badge/anchor-0.29-blueviolet?style=flat-square" alt="Anchor" />
   <img src="https://img.shields.io/badge/rust-1.73+-orange?style=flat-square&logo=rust" alt="Rust" />
 </p>
 
@@ -35,7 +36,7 @@ Based on Dorigo's Ant System (1996) and AntNet (Di Caro & Dorigo, 1998), adapted
 graph TB
     subgraph Client Layer
         A[Application]
-        B["@revm-protocol/sdk"]
+        B["revm-sdk"]
     end
 
     subgraph Routing Layer
@@ -162,7 +163,7 @@ revm-core = "0.1.0"
 
 **TypeScript**
 ```bash
-npm install @revm-protocol/sdk
+npm install revm-sdk
 ```
 
 ## Quick Start
@@ -193,7 +194,7 @@ println!("cost={}ms hops={} path={:?}", result.cost, result.hop_count, result.pa
 ### TypeScript
 
 ```typescript
-import { RevmClient } from '@revm-protocol/sdk';
+import { RevmClient } from 'revm-sdk';
 
 const client = new RevmClient({ rpcUrl: 'https://api.mainnet-beta.solana.com' });
 await client.initialize();

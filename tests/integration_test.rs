@@ -1,7 +1,7 @@
 use revm_core::aco::config::AcoConfig;
 use revm_core::aco::colony::Colony;
 use revm_core::aco::pheromone::PheromoneMatrix;
-use revm_core::network::topology::{NetworkTopology, NodeType, ValidatorEntry};
+use revm_core::network::topology::{NetworkTopology, ValidatorEntry};
 use revm_core::router::engine::RoutingEngine;
 use revm_core::router::strategy::RoutingStrategy;
 use revm_core::solana::leader::{LeaderScheduleEntry, LeaderTracker};
@@ -267,7 +267,9 @@ fn test_topology_stale_edge_detection() {
     let stale = topo.stale_edges(1000);
     assert!(stale.is_empty());
 
-    // With 0ms threshold, everything is stale
-    let stale = topo.stale_edges(0);
+    // With a very large threshold, edges created just now are stale
+    // (now - last_measured >= 0, and we use a threshold that makes the check trivially true)
+    std::thread::sleep(std::time::Duration::from_millis(2));
+    let stale = topo.stale_edges(1);
     assert!(!stale.is_empty());
 }

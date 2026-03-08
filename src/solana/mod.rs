@@ -1,7 +1,11 @@
 pub mod leader;
-pub mod sender;
 pub mod types;
 
+#[cfg(feature = "network")]
+pub mod sender;
+
 pub use leader::LeaderTracker;
-pub use sender::TransactionSender;
 pub use types::{TransactionPayload, SendResult};
+
+#[cfg(feature = "network")]
+pub use sender::TransactionSender;

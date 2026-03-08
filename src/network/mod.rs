@@ -1,5 +1,9 @@
-pub mod probe;
 pub mod topology;
 
-pub use probe::LatencyProbe;
+#[cfg(feature = "network")]
+pub mod probe;
+
 pub use topology::NetworkTopology;
+
+#[cfg(feature = "network")]
+pub use probe::LatencyProbe;
