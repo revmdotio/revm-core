@@ -115,6 +115,24 @@
       themeColor: '#00ff41',
       coverpage: false,
       notFoundPage: true,
+      plugins: [
+        function(hook) {
+          hook.ready(function() {
+            var corner = document.querySelector('.github-corner');
+            if (corner) {
+              var svg = corner.querySelector('svg');
+              if (svg) {
+                svg.style.display = 'none';
+              }
+              var img = document.createElement('img');
+              img.src = 'https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png';
+              img.style.cssText = 'width:80px;height:80px;position:absolute;top:0;right:0;';
+              corner.appendChild(img);
+              corner.style.cssText = 'position:fixed;top:0;right:0;width:80px;height:80px;z-index:999;';
+            }
+          });
+        }
+      ],
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
