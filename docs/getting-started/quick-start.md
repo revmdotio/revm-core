@@ -68,7 +68,7 @@ println!("Computed in: {}us", decision.computation_time_us);
 ## TypeScript — Send a transaction
 
 ```typescript
-import { RevmClient } from '@revm-protocol/sdk';
+import { RevmClient } from 'revm-sdk';
 
 const client = new RevmClient({
   rpcUrl: 'https://api.mainnet-beta.solana.com',
@@ -99,7 +99,7 @@ console.log(`Hops: ${result.hopCount}`);
 If you just want path computation without sending:
 
 ```typescript
-import { AcoRouter } from '@revm-protocol/sdk';
+import { AcoRouter } from 'revm-sdk';
 
 const router = new AcoRouter(10, {
   antCount: 32,

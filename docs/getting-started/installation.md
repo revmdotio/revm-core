@@ -2,6 +2,8 @@
 
 ## Rust
 
+> [revm-core on crates.io](https://crates.io/crates/revm-core)
+
 Add `revm-core` to your `Cargo.toml`:
 
 ```toml
@@ -30,8 +32,10 @@ cargo test --all
 
 ## TypeScript SDK
 
+> [revm-sdk on npm](https://www.npmjs.com/package/revm-sdk)
+
 ```bash
-npm install @revm-protocol/sdk
+npm install revm-sdk
 ```
 
 ### Requirements

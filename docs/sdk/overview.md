@@ -2,7 +2,7 @@
 
 ## What It Does
 
-The `@revm-protocol/sdk` package provides:
+The `revm-sdk` package provides:
 
 1. **RevmClient** — Full-featured transaction sending with ACO-optimized routing
 2. **AcoRouter** — Standalone client-side ACO path computation (no network calls)
@@ -10,7 +10,7 @@ The `@revm-protocol/sdk` package provides:
 ## Architecture
 
 ```
-@revm-protocol/sdk
+revm-sdk
 ├── RevmClient        High-level: init → route → send → confirm
 │   ├── topology      Built from getClusterNodes + getLeaderSchedule
 │   ├── AcoRouter     Path computation engine
@@ -39,7 +39,7 @@ The `@revm-protocol/sdk` package provides:
 **Use `RevmClient`** when you're sending transactions on Solana and want the full routing pipeline:
 
 ```typescript
-import { RevmClient } from '@revm-protocol/sdk';
+import { RevmClient } from 'revm-sdk';
 
 const client = new RevmClient({ rpcUrl: '...' });
 await client.initialize();
@@ -49,7 +49,7 @@ const result = await client.sendTransaction(tx, options);
 **Use `AcoRouter`** when you only need path computation — for analysis, visualization, or integration into your own sending logic:
 
 ```typescript
-import { AcoRouter } from '@revm-protocol/sdk';
+import { AcoRouter } from 'revm-sdk';
 
 const router = new AcoRouter(nodeCount, config);
 router.setEdge(0, 1, 6.0);
@@ -58,8 +58,10 @@ const result = router.route(0, 1);
 
 ## Installation
 
+> [revm-sdk on npm](https://www.npmjs.com/package/revm-sdk) | [GitHub](https://github.com/revmdotio/revm-core/tree/main/sdk)
+
 ```bash
-npm install @revm-protocol/sdk
+npm install revm-sdk
 ```
 
 Peer dependency:

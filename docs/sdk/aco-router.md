@@ -7,7 +7,7 @@
 ## Constructor
 
 ```typescript
-import { AcoRouter } from '@revm-protocol/sdk';
+import { AcoRouter } from 'revm-sdk';
 
 const router = new AcoRouter(nodeCount, config);
 ```

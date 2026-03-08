@@ -7,7 +7,7 @@
 ## Constructor
 
 ```typescript
-import { RevmClient } from '@revm-protocol/sdk';
+import { RevmClient } from 'revm-sdk';
 
 const client = new RevmClient({
   rpcUrl: 'https://api.mainnet-beta.solana.com',
@@ -91,7 +91,7 @@ interface SendResult {
 ## Usage Example
 
 ```typescript
-import { RevmClient } from '@revm-protocol/sdk';
+import { RevmClient } from 'revm-sdk';
 import { Keypair, Transaction, SystemProgram } from '@solana/web3.js';
 
 const client = new RevmClient({
