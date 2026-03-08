@@ -23,15 +23,19 @@
       --code-block-border-radius: 0;
       --blockquote-border-color: #ff6600;
     }
-    .github-corner svg { display: none !important; }
-    .github-corner {
-      width: 80px !important;
-      height: 80px !important;
-      overflow: visible !important;
+    .app-name img {
+      width: 28px;
+      height: 28px;
+      vertical-align: middle;
+      margin-right: 8px;
     }
-    .github-corner img {
-      width: 80px;
-      height: 80px;
+    .docs-hero {
+      text-align: center;
+      margin: 0 0 32px;
+    }
+    .docs-hero img {
+      max-width: 300px;
+      width: 100%;
     }
   </style>
 </head>
@@ -39,7 +43,7 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
-      name: 'REVM Protocol',
+      name: '<img src="https://revm.io/assets/face.png" alt="">REVM Protocol',
       repo: 'https://github.com/revmdotio/revm-core',
       loadSidebar: true,
       subMaxLevel: 3,
@@ -49,20 +53,6 @@
         noData: 'No results.',
         depth: 3,
       },
-      plugins: [
-        function(hook) {
-          hook.doneEach(function() {
-            var corner = document.querySelector('.github-corner');
-            if (corner && !corner.querySelector('img')) {
-              var svg = corner.querySelector('svg');
-              if (svg) svg.remove();
-              var img = document.createElement('img');
-              img.src = 'https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png';
-              corner.appendChild(img);
-            }
-          });
-        }
-      ],
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
