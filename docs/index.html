@@ -81,6 +81,26 @@
     .cover-main {
       color: #e0e0e0 !important;
     }
+    .github-corner {
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      z-index: 10;
+    }
+    .github-corner a {
+      color: #666 !important;
+      font-size: 12px;
+      text-decoration: none !important;
+      font-family: monospace;
+    }
+    .github-corner a:hover {
+      color: #00ff41 !important;
+    }
+    .sidebar .app-name img {
+      width: 36px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
     /* scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
@@ -94,11 +114,12 @@
   </style>
 </head>
 <body>
+  <div class="github-corner"><a href="https://github.com/revmdotio/revm-core" target="_blank">GitHub</a></div>
   <div id="app"></div>
   <script>
     window.$docsify = {
-      name: 'REVM Protocol',
-      repo: 'https://github.com/revmdotio/revm-core',
+      name: '<img src="https://revm.io/assets/face.png" alt="REVM" style="width:36px;vertical-align:middle;margin-right:8px;">REVM Protocol',
+      repo: false,
       loadSidebar: '_sidebar.md',
       subMaxLevel: 3,
       auto2top: true,
