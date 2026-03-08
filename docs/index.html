@@ -81,52 +81,17 @@
     .cover-main {
       color: #e0e0e0 !important;
     }
-    .docs-banner {
-      position: fixed;
-      top: 0;
-      left: 300px;
-      right: 0;
-      z-index: 10;
-      background: #0a0a0a;
-      border-bottom: 2px solid #1a1a2e;
-      padding: 10px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .github-corner svg {
+      display: none !important;
     }
-    .docs-banner-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .github-corner {
+      background: url('https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png') no-repeat center center !important;
+      background-size: 70px !important;
+      width: 90px !important;
+      height: 90px !important;
     }
-    .docs-banner-left img {
-      height: 32px;
-    }
-    .docs-banner-left span {
-      color: #00ff41;
-      font-family: monospace;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    .docs-banner a.gh-link {
-      color: #666 !important;
-      font-size: 12px;
-      text-decoration: none !important;
-      font-family: monospace;
-      border: 1px solid #333;
-      padding: 4px 12px;
-    }
-    .docs-banner a.gh-link:hover {
-      color: #00ff41 !important;
-      border-color: #00ff41;
-    }
-    .content {
-      padding-top: 55px !important;
-    }
-    @media (max-width: 768px) {
-      .docs-banner {
-        left: 0;
-      }
+    .github-corner:hover {
+      opacity: 0.8;
     }
     .sidebar .app-name img {
       width: 36px;
@@ -146,18 +111,11 @@
   </style>
 </head>
 <body>
-  <div class="docs-banner">
-    <div class="docs-banner-left">
-      <img src="https://revm.io/assets/face.png" alt="REVM">
-      <span>REVM DOCS</span>
-    </div>
-    <a class="gh-link" href="https://github.com/revmdotio/revm-core" target="_blank">GitHub</a>
-  </div>
   <div id="app"></div>
   <script>
     window.$docsify = {
       name: '<img src="https://revm.io/assets/face.png" alt="REVM" style="width:36px;vertical-align:middle;margin-right:8px;">REVM Protocol',
-      repo: false,
+      repo: 'https://github.com/revmdotio/revm-core',
       loadSidebar: '_sidebar.md',
       subMaxLevel: 3,
       auto2top: true,
