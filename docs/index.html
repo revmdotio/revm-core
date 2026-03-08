@@ -88,26 +88,40 @@
       right: 0;
       z-index: 10;
       background: #0a0a0a;
-      border-bottom: 1px solid #1a1a2e;
-      padding: 12px 24px;
+      border-bottom: 2px solid #1a1a2e;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .docs-banner img {
-      height: 40px;
+    .docs-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .docs-banner a {
+    .docs-banner-left img {
+      height: 32px;
+    }
+    .docs-banner-left span {
+      color: #00ff41;
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .docs-banner a.gh-link {
       color: #666 !important;
       font-size: 12px;
       text-decoration: none !important;
       font-family: monospace;
+      border: 1px solid #333;
+      padding: 4px 12px;
     }
-    .docs-banner a:hover {
+    .docs-banner a.gh-link:hover {
       color: #00ff41 !important;
+      border-color: #00ff41;
     }
     .content {
-      padding-top: 65px !important;
+      padding-top: 55px !important;
     }
     @media (max-width: 768px) {
       .docs-banner {
@@ -133,8 +147,11 @@
 </head>
 <body>
   <div class="docs-banner">
-    <img src="https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png" alt="REVM Protocol">
-    <a href="https://github.com/revmdotio/revm-core" target="_blank">GitHub</a>
+    <div class="docs-banner-left">
+      <img src="https://revm.io/assets/face.png" alt="REVM">
+      <span>REVM DOCS</span>
+    </div>
+    <a class="gh-link" href="https://github.com/revmdotio/revm-core" target="_blank">GitHub</a>
   </div>
   <div id="app"></div>
   <script>
