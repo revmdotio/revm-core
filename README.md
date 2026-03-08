@@ -8,13 +8,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/revmdotio/revm-core/actions"><img src="https://img.shields.io/github/actions/workflow/status/revmdotio/revm-core/ci.yml?branch=main&style=flat-square&logo=github&label=CI" alt="CI" /></a>
-  <a href="https://crates.io/crates/revm-core"><img src="https://img.shields.io/crates/v/revm-core?style=flat-square&logo=rust&color=orange" alt="crates.io" /></a>
-  <a href="https://www.npmjs.com/package/@revm-protocol/sdk"><img src="https://img.shields.io/npm/v/@revm-protocol/sdk?style=flat-square&logo=npm" alt="npm" /></a>
-  <a href="https://docs.rs/revm-core"><img src="https://img.shields.io/docsrs/revm-core?style=flat-square&logo=docs.rs" alt="docs.rs" /></a>
+  <a href="https://revm.io"><img src="https://img.shields.io/badge/website-revm.io-00ff41?style=flat-square&logo=googlechrome&logoColor=white" alt="Website" /></a>
+  <a href="https://x.com/revmdotio"><img src="https://img.shields.io/badge/twitter-@revmdotio-1DA1F2?style=flat-square&logo=x&logoColor=white" alt="Twitter" /></a>
   <a href="https://github.com/revmdotio/revm-core/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT" /></a>
   <img src="https://img.shields.io/badge/solana-1.17-9945FF?style=flat-square&logo=solana" alt="Solana" />
   <img src="https://img.shields.io/badge/anchor-0.29-blueviolet?style=flat-square" alt="Anchor" />
+  <img src="https://img.shields.io/badge/rust-1.73+-orange?style=flat-square&logo=rust" alt="Rust" />
 </p>
 
 <p align="center">
