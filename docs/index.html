@@ -81,20 +81,38 @@
     .cover-main {
       color: #e0e0e0 !important;
     }
-    .github-corner {
+    .docs-banner {
       position: fixed;
-      top: 12px;
-      right: 16px;
+      top: 0;
+      left: 300px;
+      right: 0;
       z-index: 10;
+      background: #0a0a0a;
+      border-bottom: 1px solid #1a1a2e;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .github-corner a {
+    .docs-banner img {
+      height: 40px;
+    }
+    .docs-banner a {
       color: #666 !important;
       font-size: 12px;
       text-decoration: none !important;
       font-family: monospace;
     }
-    .github-corner a:hover {
+    .docs-banner a:hover {
       color: #00ff41 !important;
+    }
+    .content {
+      padding-top: 65px !important;
+    }
+    @media (max-width: 768px) {
+      .docs-banner {
+        left: 0;
+      }
     }
     .sidebar .app-name img {
       width: 36px;
@@ -114,7 +132,10 @@
   </style>
 </head>
 <body>
-  <div class="github-corner"><a href="https://github.com/revmdotio/revm-core" target="_blank">GitHub</a></div>
+  <div class="docs-banner">
+    <img src="https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png" alt="REVM Protocol">
+    <a href="https://github.com/revmdotio/revm-core" target="_blank">GitHub</a>
+  </div>
   <div id="app"></div>
   <script>
     window.$docsify = {
