@@ -10,12 +10,17 @@
     :root {
       --theme-color: #00ff41;
     }
-    body {
-      background: #0a0a0a;
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      background: #0a0a0a !important;
+      color: #e0e0e0 !important;
     }
     .sidebar {
       background: #0a0a0a !important;
       border-right: 1px solid #1a1a2e !important;
+      color: #ccc !important;
     }
     .sidebar ul li a {
       color: #ccc !important;
@@ -27,12 +32,14 @@
     .sidebar .app-name {
       color: #00ff41 !important;
     }
-    .markdown-section {
+    .content, section.content, .markdown-section, main {
+      background: #0a0a0a !important;
       color: #e0e0e0 !important;
     }
     .markdown-section h1,
     .markdown-section h2,
-    .markdown-section h3 {
+    .markdown-section h3,
+    .markdown-section h4 {
       color: #00ff41 !important;
     }
     .markdown-section a {
@@ -50,21 +57,34 @@
     }
     .markdown-section pre code {
       color: #e0e0e0 !important;
+      background: transparent !important;
+    }
+    .markdown-section table {
+      display: table !important;
     }
     .markdown-section table th {
       background: #1a1a2e !important;
       color: #00ff41 !important;
+      border: 1px solid #333 !important;
     }
     .markdown-section table td {
-      border-color: #1a1a2e !important;
-    }
-    .markdown-section table tr {
+      border: 1px solid #1a1a2e !important;
       background: #0a0a0a !important;
       color: #ccc !important;
+    }
+    .markdown-section table tr:nth-child(even) td {
+      background: #0f0f1a !important;
     }
     .markdown-section blockquote {
       border-left: 4px solid #ff6600 !important;
       color: #aaa !important;
+      background: #0f0f1a !important;
+    }
+    .markdown-section strong {
+      color: #fff !important;
+    }
+    .markdown-section p, .markdown-section li {
+      color: #e0e0e0 !important;
     }
     .search input {
       background: #1a1a2e !important;
@@ -72,30 +92,20 @@
       border: 1px solid #333 !important;
       border-radius: 0 !important;
     }
+    .search .matching-post {
+      background: #0a0a0a !important;
+      border-bottom: 1px solid #1a1a2e !important;
+    }
+    .search .matching-post .search-keyword {
+      color: #00ff41 !important;
+    }
     .app-nav {
       background: #0a0a0a !important;
     }
-    body .content {
-      background: #0a0a0a !important;
-    }
-    .cover-main {
-      color: #e0e0e0 !important;
-    }
-    .sidebar .app-name img {
-      width: 36px;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
     /* scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0a0a0a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1a1a2e;
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #1a1a2e; }
   </style>
 </head>
 <body>
@@ -120,15 +130,15 @@
           hook.ready(function() {
             var corner = document.querySelector('.github-corner');
             if (corner) {
+              // Remove SVG completely
               var svg = corner.querySelector('svg');
-              if (svg) {
-                svg.style.display = 'none';
-              }
+              if (svg) svg.remove();
+              // Add our logo
               var img = document.createElement('img');
               img.src = 'https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png';
-              img.style.cssText = 'width:80px;height:80px;position:absolute;top:0;right:0;';
+              img.style.cssText = 'width:80px;height:80px;';
+              corner.style.cssText = 'position:fixed;top:10px;right:10px;z-index:999;display:block;text-decoration:none;';
               corner.appendChild(img);
-              corner.style.cssText = 'position:fixed;top:0;right:0;width:80px;height:80px;z-index:999;';
             }
           });
         }

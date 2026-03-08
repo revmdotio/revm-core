@@ -1,7 +1,3 @@
-<div style="text-align:center;margin:20px 0 40px;">
-  <img src="https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png" alt="REVM Protocol" style="max-width:400px;width:100%;">
-</div>
-
 # REVM Core
 
 Ant Colony Optimization routing engine for Solana transaction delivery.
