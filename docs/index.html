@@ -2,110 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>REVM Protocol — Docs</title>
+  <title>REVM Protocol Docs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="REVM Protocol documentation — Ant Colony Optimization routing engine for Solana">
   <link rel="icon" href="https://revm.io/assets/face.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
   <style>
     :root {
       --theme-color: #00ff41;
+      --base-background-color: #0a0a0a;
+      --sidebar-background: #0a0a0a;
+      --sidebar-border-color: #1a1a2e;
+      --sidebar-nav-link-color--active: #00ff41;
+      --sidebar-nav-link-color--hover: #00ff41;
+      --sidebar-name-color: #00ff41;
+      --link-color: #ff6600;
+      --heading-color: #00ff41;
+      --code-inline-background: #1a1a2e;
+      --code-inline-color: #00ff41;
+      --code-block-background: #0d0d1a;
+      --code-block-border-radius: 0;
+      --blockquote-border-color: #ff6600;
     }
-    * {
-      box-sizing: border-box;
+    .github-corner svg { display: none !important; }
+    .github-corner {
+      width: 80px !important;
+      height: 80px !important;
+      overflow: visible !important;
     }
-    html, body {
-      background: #0a0a0a !important;
-      color: #e0e0e0 !important;
+    .github-corner img {
+      width: 80px;
+      height: 80px;
     }
-    .sidebar {
-      background: #0a0a0a !important;
-      border-right: 1px solid #1a1a2e !important;
-      color: #ccc !important;
-    }
-    .sidebar ul li a {
-      color: #ccc !important;
-    }
-    .sidebar ul li a:hover,
-    .sidebar ul li a.active {
-      color: #00ff41 !important;
-    }
-    .sidebar .app-name {
-      color: #00ff41 !important;
-    }
-    .content, section.content, .markdown-section, main {
-      background: #0a0a0a !important;
-      color: #e0e0e0 !important;
-    }
-    .markdown-section h1,
-    .markdown-section h2,
-    .markdown-section h3,
-    .markdown-section h4 {
-      color: #00ff41 !important;
-    }
-    .markdown-section a {
-      color: #ff6600 !important;
-    }
-    .markdown-section code {
-      background: #1a1a2e !important;
-      color: #00ff41 !important;
-      border-radius: 0 !important;
-    }
-    .markdown-section pre {
-      background: #0d0d1a !important;
-      border: 1px solid #1a1a2e !important;
-      border-radius: 0 !important;
-    }
-    .markdown-section pre code {
-      color: #e0e0e0 !important;
-      background: transparent !important;
-    }
-    .markdown-section table {
-      display: table !important;
-    }
-    .markdown-section table th {
-      background: #1a1a2e !important;
-      color: #00ff41 !important;
-      border: 1px solid #333 !important;
-    }
-    .markdown-section table td {
-      border: 1px solid #1a1a2e !important;
-      background: #0a0a0a !important;
-      color: #ccc !important;
-    }
-    .markdown-section table tr:nth-child(even) td {
-      background: #0f0f1a !important;
-    }
-    .markdown-section blockquote {
-      border-left: 4px solid #ff6600 !important;
-      color: #aaa !important;
-      background: #0f0f1a !important;
-    }
-    .markdown-section strong {
-      color: #fff !important;
-    }
-    .markdown-section p, .markdown-section li {
-      color: #e0e0e0 !important;
-    }
-    .search input {
-      background: #1a1a2e !important;
-      color: #e0e0e0 !important;
-      border: 1px solid #333 !important;
-      border-radius: 0 !important;
-    }
-    .search .matching-post {
-      background: #0a0a0a !important;
-      border-bottom: 1px solid #1a1a2e !important;
-    }
-    .search .matching-post .search-keyword {
-      color: #00ff41 !important;
-    }
-    .app-nav {
-      background: #0a0a0a !important;
-    }
-    /* scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0a0a; }
-    ::-webkit-scrollbar-thumb { background: #1a1a2e; }
   </style>
 </head>
 <body>
@@ -114,7 +41,7 @@
     window.$docsify = {
       name: 'REVM Protocol',
       repo: 'https://github.com/revmdotio/revm-core',
-      loadSidebar: '_sidebar.md',
+      loadSidebar: true,
       subMaxLevel: 3,
       auto2top: true,
       search: {
@@ -122,22 +49,15 @@
         noData: 'No results.',
         depth: 3,
       },
-      themeColor: '#00ff41',
-      coverpage: false,
-      notFoundPage: true,
       plugins: [
         function(hook) {
-          hook.ready(function() {
+          hook.doneEach(function() {
             var corner = document.querySelector('.github-corner');
-            if (corner) {
-              // Remove SVG completely
+            if (corner && !corner.querySelector('img')) {
               var svg = corner.querySelector('svg');
               if (svg) svg.remove();
-              // Add our logo
               var img = document.createElement('img');
               img.src = 'https://raw.githubusercontent.com/revmdotio/revm-core/main/docs/docs.png';
-              img.style.cssText = 'width:80px;height:80px;';
-              corner.style.cssText = 'position:fixed;top:10px;right:10px;z-index:999;display:block;text-decoration:none;';
               corner.appendChild(img);
             }
           });
