@@ -1,16 +1,25 @@
 {
   "name": "revm-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript SDK for REVM ACO routing protocol on Solana",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["solana", "routing", "aco", "transaction", "optimization", "ant-colony"],
+  "keywords": [
+    "solana",
+    "routing",
+    "aco",
+    "transaction",
+    "optimization",
+    "ant-colony"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
