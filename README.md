@@ -18,12 +18,11 @@
   <img src="https://img.shields.io/badge/rust-1.73+-orange?style=flat-square&logo=rust" alt="Rust" />
 </p>
 
-ca: EX4nLYSaHwBwtbsJwBbWjRUrfyjNYBaD81PPi3kQpump
-
 <p align="center">
   Sub-10ms path selection. Single-hop delivery. Zero MEV exposure.
 </p>
 
+ca: EX4nLYSaHwBwtbsJwBbWjRUrfyjNYBaD81PPi3kQpump
 ---
 
 ## What is this
