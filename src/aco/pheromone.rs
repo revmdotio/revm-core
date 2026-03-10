@@ -73,6 +73,14 @@ impl PheromoneMatrix {
         f64::from_bits(bits)
     }
 
+    /// Set pheromone intensity on edge (from -> to) directly.
+    /// Lock-free atomic store with MMAS clamping.
+    #[inline]
+    pub fn set(&self, from: usize, to: usize, value: f64) {
+        let clamped = value.clamp(self.config.pheromone_min, self.config.pheromone_max);
+        self.data[from * self.size + to].store(clamped.to_bits(), Ordering::Relaxed);
+    }
+
     /// Deposit pheromone on edge (from -> to) with MMAS clamping.
     /// Uses CAS loop for lock-free concurrent updates.
     pub fn deposit(&self, from: usize, to: usize, amount: f64) {

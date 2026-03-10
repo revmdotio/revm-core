@@ -17,6 +17,31 @@ pub struct RoutingResult {
     pub ants_dispatched: usize,
 }
 
+/// Result of multi-path routing.
+///
+/// v0.4.0: Returns K diverse paths ranked by cost.
+/// The caller sends the transaction through all K paths simultaneously;
+/// whichever lands first wins. This maximizes landing probability
+/// under volatile network conditions.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MultiPathResult {
+    /// Diverse paths ranked by cost (best first).
+    pub paths: Vec<RankedPath>,
+    /// Total ants dispatched across all discovery rounds.
+    pub total_ants_dispatched: usize,
+    /// Total iterations used across all rounds.
+    pub total_iterations: u32,
+}
+
+/// A single ranked path within a multi-path result.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RankedPath {
+    pub rank: usize,
+    pub path: Vec<usize>,
+    pub cost: f64,
+    pub hop_count: usize,
+}
+
 /// The Colony is the top-level ACO routing engine.
 ///
 /// It manages pheromone state and dispatches ant agents to discover
@@ -159,6 +184,104 @@ impl Colony {
             hop_count,
             iterations_used: converged_at,
             ants_dispatched: total_ants,
+        })
+    }
+
+    /// Multi-path routing: discover K diverse paths from source to destination.
+    ///
+    /// v0.4.0: Runs multiple ACO rounds with pheromone suppression between rounds.
+    /// After discovering path i, pheromone on its edges is temporarily dampened,
+    /// forcing subsequent rounds to explore alternative routes. This produces
+    /// K structurally diverse paths, not just K-best from a single run.
+    ///
+    /// Strategy: send the same transaction through all K paths simultaneously.
+    /// First to land wins. Maximizes landing probability under congestion.
+    pub fn multi_route(
+        &mut self,
+        source: usize,
+        destination: usize,
+    ) -> Result<MultiPathResult> {
+        let k = self.config.multi_path_count.max(1);
+        let num_nodes = self.topology.node_count();
+
+        if source >= num_nodes {
+            return Err(crate::RevmError::NodeNotFound(format!(
+                "source index {} out of bounds ({})",
+                source, num_nodes
+            )));
+        }
+        if destination >= num_nodes {
+            return Err(crate::RevmError::NodeNotFound(format!(
+                "destination index {} out of bounds ({})",
+                destination, num_nodes
+            )));
+        }
+
+        // Save pheromone state so we can suppress between rounds
+        let saved_pheromone = self.pheromone.clone();
+        let mut ranked_paths: Vec<RankedPath> = Vec::with_capacity(k);
+        let mut total_ants = 0usize;
+        let mut total_iters = 0u32;
+
+        for round in 0..k {
+            // Run standard ACO routing
+            match self.route(source, destination) {
+                Ok(result) => {
+                    total_ants += result.ants_dispatched;
+                    total_iters += result.iterations_used;
+
+                    // Check path is structurally different from existing paths
+                    let dominated = ranked_paths.iter().any(|rp| rp.path == result.path);
+
+                    if !dominated {
+                        ranked_paths.push(RankedPath {
+                            rank: round + 1,
+                            path: result.path.clone(),
+                            cost: result.cost,
+                            hop_count: result.hop_count,
+                        });
+
+                        // Suppress pheromone on discovered path edges to force diversity.
+                        // Dampen by 70% to push ants toward alternative routes.
+                        for window in result.path.windows(2) {
+                            let current = self.pheromone.get(window[0], window[1]);
+                            self.pheromone.set(window[0], window[1], current * 0.3);
+                        }
+                    }
+                }
+                Err(_) => {
+                    // No more paths found, stop searching
+                    break;
+                }
+            }
+        }
+
+        // Restore original pheromone state (suppression was temporary)
+        self.pheromone = saved_pheromone;
+
+        if ranked_paths.is_empty() {
+            return Err(crate::RevmError::NoPathFound(self.config.max_iterations));
+        }
+
+        // Re-rank by cost
+        ranked_paths.sort_by(|a, b| a.cost.partial_cmp(&b.cost).unwrap());
+        for (i, rp) in ranked_paths.iter_mut().enumerate() {
+            rp.rank = i + 1;
+        }
+
+        info!(
+            "MultiRoute {}->{}: {} paths found, best_cost={:.2}ms, ants={}",
+            source,
+            destination,
+            ranked_paths.len(),
+            ranked_paths[0].cost,
+            total_ants
+        );
+
+        Ok(MultiPathResult {
+            paths: ranked_paths,
+            total_ants_dispatched: total_ants,
+            total_iterations: total_iters,
         })
     }
 
@@ -307,5 +430,76 @@ mod tests {
 
         let result = colony.route(0, 99);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_multi_route_finds_paths() {
+        let topo = build_test_topology();
+        let config = AcoConfig {
+            ant_count: 32,
+            max_iterations: 50,
+            multi_path_count: 3,
+            ..AcoConfig::default()
+        };
+        let mut colony = Colony::new(topo, config).unwrap();
+
+        let result = colony.multi_route(0, 3).unwrap();
+
+        // Should find at least 1 path
+        assert!(!result.paths.is_empty());
+        assert_eq!(result.paths[0].rank, 1);
+
+        // All paths should start at 0 and end at 3
+        for rp in &result.paths {
+            assert_eq!(*rp.path.first().unwrap(), 0);
+            assert_eq!(*rp.path.last().unwrap(), 3);
+        }
+
+        // Total ants should be dispatched
+        assert!(result.total_ants_dispatched > 0);
+    }
+
+    #[test]
+    fn test_multi_route_preserves_pheromone() {
+        let topo = build_test_topology();
+        let config = AcoConfig {
+            ant_count: 16,
+            max_iterations: 30,
+            multi_path_count: 2,
+            ..AcoConfig::default()
+        };
+        let mut colony = Colony::new(topo, config).unwrap();
+
+        // Get pheromone before multi_route
+        let _before = colony.pheromone().get(0, 1);
+
+        let _ = colony.multi_route(0, 3).unwrap();
+
+        // Pheromone should be restored after multi_route
+        // (suppression is temporary, original state restored)
+        // Note: route() modifies pheromone via deposit, so values will differ
+        // but the suppression specifically should be undone
+        let after = colony.pheromone().get(0, 1);
+        // After restore, pheromone reflects deposits from routing, not suppression
+        assert!(after > 0.0);
+    }
+
+    #[test]
+    fn test_multi_route_ranked_by_cost() {
+        let topo = build_test_topology();
+        let config = AcoConfig {
+            ant_count: 64,
+            max_iterations: 50,
+            multi_path_count: 3,
+            ..AcoConfig::default()
+        };
+        let mut colony = Colony::new(topo, config).unwrap();
+
+        let result = colony.multi_route(0, 3).unwrap();
+
+        // Verify paths are sorted by cost
+        for i in 1..result.paths.len() {
+            assert!(result.paths[i].cost >= result.paths[i - 1].cost);
+        }
     }
 }

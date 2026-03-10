@@ -63,6 +63,11 @@ pub struct AcoConfig {
 
     /// Size of the rolling latency window for variance calculation.
     pub latency_window_size: usize,
+
+    /// Number of diverse paths to return in multi-path routing.
+    /// v0.4.0: Multi-path sends the same transaction through K distinct
+    /// routes simultaneously. First to land wins.
+    pub multi_path_count: usize,
 }
 
 impl Default for AcoConfig {
@@ -82,6 +87,7 @@ impl Default for AcoConfig {
             adaptive_evaporation: false,
             adaptive_alpha: 0.5,
             latency_window_size: 50,
+            multi_path_count: 3,
         }
     }
 }
@@ -134,6 +140,7 @@ impl AcoConfig {
             adaptive_evaporation: true,
             adaptive_alpha: 0.8,
             latency_window_size: 100,
+            multi_path_count: 3,
         }
     }
 
@@ -154,6 +161,7 @@ impl AcoConfig {
             adaptive_evaporation: false,
             adaptive_alpha: 0.5,
             latency_window_size: 50,
+            multi_path_count: 1,
         }
     }
 }
