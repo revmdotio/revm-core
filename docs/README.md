@@ -4,7 +4,7 @@
 
 # REVM Core
 
-[![Crates.io](https://img.shields.io/crates/v/revm-core)](https://crates.io/crates/revm-core) [![npm](https://img.shields.io/npm/v/revm-sdk)](https://www.npmjs.com/package/revm-sdk) [![GitHub](https://img.shields.io/github/stars/revmdotio/revm-core)](https://github.com/revmdotio/revm-core) [![Website](https://img.shields.io/badge/website-revm.io-00ff41)](https://revm.io) [![X](https://img.shields.io/badge/X-@revmdotio-000)](https://x.com/revmdotio)
+[![Crates.io](https://img.shields.io/crates/v/revm-core)](https://crates.io/crates/revm-core) [![npm](https://img.shields.io/npm/v/revm-sdk)](https://www.npmjs.com/package/revm-sdk) [![Website](https://img.shields.io/badge/website-revm.io-00ff41)](https://revm.io) [![X](https://img.shields.io/badge/X-@revmdotio-000)](https://x.com/revmdotio)
 
 Ant Colony Optimization routing engine for Solana transaction delivery.
 

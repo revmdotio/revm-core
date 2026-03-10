@@ -1,18 +1,38 @@
-use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
 use super::config::AcoConfig;
 
-/// Thread-safe pheromone matrix for the colony graph.
+/// Thread-safe pheromone matrix using lock-free atomic operations.
 ///
-/// Stores pheromone intensity on each directed edge (i -> j).
-/// Uses MMAS (Max-Min Ant System) bounds to prevent stagnation.
-#[derive(Debug, Clone)]
+/// v0.3.0: Replaced `RwLock<Vec<f64>>` with `AtomicU64` per edge.
+/// Each pheromone value is stored as `f64::to_bits() -> u64` and updated
+/// via Compare-And-Swap (CAS) loops. This eliminates mutex contention
+/// under high-throughput conditions (>5k tx/s).
+///
+/// Based on Herlihy & Shavit (2012) non-blocking concurrent data structures,
+/// adapted for continuous-valued pheromone fields.
+#[derive(Debug)]
 pub struct PheromoneMatrix {
     size: usize,
-    data: Arc<RwLock<Vec<f64>>>,
+    data: Arc<Vec<AtomicU64>>,
     config: AcoConfig,
+}
+
+impl Clone for PheromoneMatrix {
+    fn clone(&self) -> Self {
+        let new_data: Vec<AtomicU64> = self
+            .data
+            .iter()
+            .map(|a| AtomicU64::new(a.load(Ordering::Relaxed)))
+            .collect();
+        Self {
+            size: self.size,
+            data: Arc::new(new_data),
+            config: self.config.clone(),
+        }
+    }
 }
 
 /// Snapshot of the pheromone matrix for serialization and diagnostics.
@@ -34,35 +54,72 @@ pub struct PheromoneEdge {
 
 impl PheromoneMatrix {
     pub fn new(size: usize, config: &AcoConfig) -> Self {
-        let data = vec![config.initial_pheromone; size * size];
+        let initial_bits = config.initial_pheromone.to_bits();
+        let data: Vec<AtomicU64> = (0..size * size)
+            .map(|_| AtomicU64::new(initial_bits))
+            .collect();
         Self {
             size,
-            data: Arc::new(RwLock::new(data)),
+            data: Arc::new(data),
             config: config.clone(),
         }
     }
 
     /// Get pheromone intensity on edge (from -> to).
+    /// Lock-free atomic load.
+    #[inline]
     pub fn get(&self, from: usize, to: usize) -> f64 {
-        let data = self.data.read();
-        data[from * self.size + to]
+        let bits = self.data[from * self.size + to].load(Ordering::Relaxed);
+        f64::from_bits(bits)
     }
 
     /// Deposit pheromone on edge (from -> to) with MMAS clamping.
+    /// Uses CAS loop for lock-free concurrent updates.
     pub fn deposit(&self, from: usize, to: usize, amount: f64) {
-        let mut data = self.data.write();
         let idx = from * self.size + to;
-        let new_val = (data[idx] + amount).min(self.config.pheromone_max);
-        data[idx] = new_val;
+        let cell = &self.data[idx];
+        loop {
+            let old = cell.load(Ordering::Relaxed);
+            let old_val = f64::from_bits(old);
+            let new_val = (old_val + amount).min(self.config.pheromone_max);
+            match cell.compare_exchange_weak(
+                old,
+                new_val.to_bits(),
+                Ordering::AcqRel,
+                Ordering::Relaxed,
+            ) {
+                Ok(_) => break,
+                Err(_) => continue, // CAS failed, retry
+            }
+        }
     }
 
     /// Evaporate all edges: tau(i,j) = (1 - rho) * tau(i,j).
     /// Clamps to pheromone_min to preserve path diversity.
     pub fn evaporate(&self) {
-        let mut data = self.data.write();
-        let factor = 1.0 - self.config.evaporation_rate;
-        for val in data.iter_mut() {
-            *val = (*val * factor).max(self.config.pheromone_min);
+        self.evaporate_with_rate(self.config.evaporation_rate);
+    }
+
+    /// Evaporate with a custom rate (for adaptive evaporation).
+    /// v0.3.0: Supports dynamic rho based on latency variance.
+    pub fn evaporate_with_rate(&self, rate: f64) {
+        let factor = 1.0 - rate;
+        let min = self.config.pheromone_min;
+        for cell in self.data.iter() {
+            loop {
+                let old = cell.load(Ordering::Relaxed);
+                let old_val = f64::from_bits(old);
+                let new_val = (old_val * factor).max(min);
+                match cell.compare_exchange_weak(
+                    old,
+                    new_val.to_bits(),
+                    Ordering::AcqRel,
+                    Ordering::Relaxed,
+                ) {
+                    Ok(_) => break,
+                    Err(_) => continue,
+                }
+            }
         }
     }
 
@@ -81,15 +138,14 @@ impl PheromoneMatrix {
     /// Reset all pheromone to initial value. Used when topology changes
     /// invalidate the existing trail map.
     pub fn reset(&self) {
-        let mut data = self.data.write();
-        for val in data.iter_mut() {
-            *val = self.config.initial_pheromone;
+        let initial_bits = self.config.initial_pheromone.to_bits();
+        for cell in self.data.iter() {
+            cell.store(initial_bits, Ordering::Relaxed);
         }
     }
 
     /// Generate a serializable snapshot for diagnostics.
     pub fn snapshot(&self) -> PheromoneSnapshot {
-        let data = self.data.read();
         let mut edges = Vec::new();
         let mut total = 0.0;
         let mut count = 0usize;
@@ -99,7 +155,7 @@ impl PheromoneMatrix {
                 if i == j {
                     continue;
                 }
-                let intensity = data[i * self.size + j];
+                let intensity = self.get(i, j);
                 if intensity > self.config.pheromone_min * 1.1 {
                     edges.push(PheromoneEdge {
                         from: i,
@@ -208,5 +264,39 @@ mod tests {
         let snap = matrix.snapshot();
         assert_eq!(snap.size, 3);
         assert!(snap.total_pheromone > 0.0);
+    }
+
+    #[test]
+    fn test_evaporate_with_custom_rate() {
+        let matrix = PheromoneMatrix::new(4, &test_config());
+        matrix.deposit(0, 1, 3.0); // now 4.0
+        matrix.evaporate_with_rate(0.75); // 4.0 * 0.25 = 1.0
+        assert!((matrix.get(0, 1) - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_concurrent_deposits() {
+        use std::thread;
+
+        let config = test_config();
+        let matrix = Arc::new(PheromoneMatrix::new(4, &config));
+
+        let handles: Vec<_> = (0..8)
+            .map(|_| {
+                let m = Arc::clone(&matrix);
+                thread::spawn(move || {
+                    for _ in 0..100 {
+                        m.deposit(0, 1, 0.01);
+                    }
+                })
+            })
+            .collect();
+
+        for h in handles {
+            h.join().unwrap();
+        }
+
+        // 1.0 initial + 800 * 0.01 = 9.0, clamped to 5.0
+        assert_eq!(matrix.get(0, 1), 5.0);
     }
 }

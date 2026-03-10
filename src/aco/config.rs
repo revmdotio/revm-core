@@ -48,6 +48,21 @@ pub struct AcoConfig {
     /// Stale threshold in milliseconds. Edges with latency measurements
     /// older than this value are re-probed before routing.
     pub stale_threshold_ms: u64,
+
+    /// Enable adaptive evaporation rate based on latency variance.
+    /// v0.3.0: When enabled, rho scales dynamically:
+    ///   rho(t) = rho_base * (1 + adaptive_alpha * sigma(latency_window))
+    /// High variance -> faster evaporation -> forced exploration.
+    /// Low variance -> preserved proven routes.
+    /// Inspired by Stützle & Hoos MAX-MIN Ant System adaptive mechanisms.
+    pub adaptive_evaporation: bool,
+
+    /// Scaling factor for adaptive evaporation.
+    /// Controls how aggressively evaporation responds to latency variance.
+    pub adaptive_alpha: f64,
+
+    /// Size of the rolling latency window for variance calculation.
+    pub latency_window_size: usize,
 }
 
 impl Default for AcoConfig {
@@ -64,6 +79,9 @@ impl Default for AcoConfig {
             deposit_weight: 1.0,
             latency_weight: 1.0,
             stale_threshold_ms: 2000,
+            adaptive_evaporation: false,
+            adaptive_alpha: 0.5,
+            latency_window_size: 50,
         }
     }
 }
@@ -113,6 +131,9 @@ impl AcoConfig {
             deposit_weight: 1.5,
             latency_weight: 1.2,
             stale_threshold_ms: 1200,
+            adaptive_evaporation: true,
+            adaptive_alpha: 0.8,
+            latency_window_size: 100,
         }
     }
 
@@ -130,6 +151,9 @@ impl AcoConfig {
             deposit_weight: 1.0,
             latency_weight: 0.8,
             stale_threshold_ms: 5000,
+            adaptive_evaporation: false,
+            adaptive_alpha: 0.5,
+            latency_window_size: 50,
         }
     }
 }

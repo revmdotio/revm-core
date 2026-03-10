@@ -22,6 +22,10 @@ pub struct RoutingResult {
 /// It manages pheromone state and dispatches ant agents to discover
 /// optimal paths through the network topology. Each call to `route()`
 /// runs a full ACO optimization cycle.
+///
+/// v0.3.0: Added adaptive evaporation rate based on latency variance.
+/// When `config.adaptive_evaporation` is enabled, the evaporation rate
+/// scales dynamically: rho(t) = rho_base * (1 + alpha * sigma(latency_window)).
 pub struct Colony {
     config: AcoConfig,
     pheromone: PheromoneMatrix,
@@ -29,6 +33,8 @@ pub struct Colony {
     best_path: Option<Vec<usize>>,
     best_cost: f64,
     total_routes: u64,
+    /// Rolling window of recent route latencies for adaptive evaporation.
+    latency_window: Vec<f64>,
 }
 
 impl Colony {
@@ -44,6 +50,7 @@ impl Colony {
             best_path: None,
             best_cost: f64::MAX,
             total_routes: 0,
+            latency_window: Vec::new(),
         })
     }
 
@@ -97,8 +104,9 @@ impl Colony {
                 }
             }
 
-            // Evaporate
-            self.pheromone.evaporate();
+            // Evaporate with adaptive or fixed rate
+            let effective_rho = self.compute_evaporation_rate();
+            self.pheromone.evaporate_with_rate(effective_rho);
 
             // Global-best deposit (ACS strategy)
             if let Some(ref path) = round_best_path {
@@ -131,6 +139,12 @@ impl Colony {
             self.best_path = Some(path.clone());
         }
         self.total_routes += 1;
+
+        // Record latency for adaptive evaporation window
+        self.latency_window.push(iteration_best_cost);
+        if self.latency_window.len() > self.config.latency_window_size {
+            self.latency_window.remove(0);
+        }
 
         let hop_count = if path.len() > 1 { path.len() - 1 } else { 0 };
 
@@ -183,6 +197,49 @@ impl Colony {
 
     pub fn topology(&self) -> &NetworkTopology {
         &self.topology
+    }
+
+    /// Compute the effective evaporation rate.
+    ///
+    /// v0.3.0 adaptive evaporation:
+    ///   rho(t) = rho_base * (1 + alpha * sigma(latency_window))
+    ///
+    /// When latency variance (sigma) rises, evaporation accelerates,
+    /// forcing faster exploration of alternative routes.
+    /// When the network stabilizes, rho decays back to baseline,
+    /// preserving proven routes.
+    ///
+    /// Clamped to [rho_base, 0.95] to avoid complete trail extinction.
+    fn compute_evaporation_rate(&self) -> f64 {
+        if !self.config.adaptive_evaporation || self.latency_window.len() < 3 {
+            return self.config.evaporation_rate;
+        }
+
+        let n = self.latency_window.len() as f64;
+        let mean = self.latency_window.iter().sum::<f64>() / n;
+        let variance = self.latency_window.iter()
+            .map(|x| (x - mean).powi(2))
+            .sum::<f64>() / n;
+        let sigma = variance.sqrt();
+
+        // Normalize sigma relative to mean to get coefficient of variation
+        let cv = if mean > 0.0 { sigma / mean } else { 0.0 };
+
+        let adaptive_rho = self.config.evaporation_rate
+            * (1.0 + self.config.adaptive_alpha * cv);
+
+        // Clamp to prevent total trail extinction
+        adaptive_rho.clamp(self.config.evaporation_rate, 0.95)
+    }
+
+    /// Get the current adaptive evaporation rate (for diagnostics).
+    pub fn current_evaporation_rate(&self) -> f64 {
+        self.compute_evaporation_rate()
+    }
+
+    /// Get the latency window for diagnostics.
+    pub fn latency_window(&self) -> &[f64] {
+        &self.latency_window
     }
 }
 
